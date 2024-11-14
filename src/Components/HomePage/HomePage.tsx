@@ -1,31 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ToDoItem } from '../ToDo';
+import { Kategorije } from '../Kategorije';
 
 
 export const HomePage = () => {
-
-  const [userData, setUserData] = useState({ email: '', name: '' });
   const navigate = useNavigate();
+//  useEffect(() => {
+//     const savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
+//     setUserData(savedUserData);
+//   }, []);
 
- useEffect(() => {
-    const savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
-    setUserData(savedUserData);
-  }, []);
-
-  const handleLogOut = () =>
-  {
-    localStorage.removeItem('userData'); 
-    alert('You have successfully logged out.');
-    navigate('/login'); 
-  }
-
-
+    const goToList = () => {
+      navigate('/list');
+    }
+   
   return (
-
-  <div className="user-profile">Dobrodošli {userData.email} !
-  <button className="logOutButton" onClick={handleLogOut}>Odjava</button>
-  
-  </div>
-
+    <div>
+      <Kategorije/>
+      <button className="list" onClick={goToList}>My list</button>
+      <h1>To-Do List Categories</h1>
+    </div>
   );
 };

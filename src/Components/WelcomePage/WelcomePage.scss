@@ -6,7 +6,6 @@
      justify-content: center;
      align-items: center;
      background: linear-gradient(to right, #d9cce8, #2575fc);
-
  }
 
  .welcome {
@@ -17,6 +16,18 @@
             padding: 10px 15px;
           
  }
+//  .background {
+//      background-image: url('/public/yellow-steel-stationery-blue-table.jpg');
+//      /* relative to the public folder */
+//      background-size: cover;
+//      /* cover the whole container */
+//      background-position: center;
+//      /* center the image */
+//      background-repeat: no-repeat;
+//      /* no repeating */
+//      height: 100vh;
+//      /* Full height of the viewport */
+//  }
  
  button {
      background-color: #2575fc;

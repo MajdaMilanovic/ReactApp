@@ -1,6 +1,7 @@
 import React from 'react';
 import './WelcomePage.scss';
 import { useNavigate } from 'react-router-dom';
+import { Kategorije } from '../Kategorije';
 
 
 
@@ -11,12 +12,13 @@ export const WelcomePage = () => {
 
    const handleNavigation = () => {
     navigate('/register');
+
+  
   };
 
 
   return (
     <div>
-  <div className='welcome'>Dobrodošli!</div>
   <button onClick={handleNavigation}>Registracija</button>
   </div>
   );

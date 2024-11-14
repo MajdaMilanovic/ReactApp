@@ -1,0 +1,8 @@
+.category-list {
+    display: flex; // Display categories inline
+        gap: 16px; // Add spacing between each category
+        justify-content: center; // Center the categories on the page
+        list-style-type: none;
+        padding: 0;
+        margin: 20px 0;
+}

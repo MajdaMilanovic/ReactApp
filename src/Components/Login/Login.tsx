@@ -2,30 +2,29 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.scss';
 
-
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-   
     const savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
 
-    
     if (savedUserData.email === email && savedUserData.password === password) {
+      // Set login status
+      localStorage.setItem('isLoggedIn', 'true');
       alert('Login successful!');
-      navigate('/'); 
+      navigate('/');
     } else {
       alert('User not registered. Redirecting to registration page.');
-      navigate('/register'); 
+      navigate('/register');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} >
+    <form onSubmit={handleSubmit}>
       <h2>Login</h2>
 
       <label>
@@ -37,7 +36,7 @@ const LoginForm = () => {
           required
         />
       </label>
-<br />
+      <br />
       <label>
         Password:
         <input
@@ -47,7 +46,7 @@ const LoginForm = () => {
           required
         />
       </label>
-<br />
+      <br />
       <button type="submit">Login</button>
     </form>
   );

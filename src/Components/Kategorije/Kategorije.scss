@@ -1,0 +1,23 @@
+.categories {
+    display: flex; // Display categories inline
+    gap: 16px; // Add spacing between each category
+    justify-content: center; // Center the categories on the page
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+
+    li {
+        padding: 12px 20px; // Add padding to make the buttons larger
+        background-color: #4CAF50; // Green background color
+        color: #ffffff; // White text
+        font-size: 18px; // Increase font size for larger text
+        font-weight: bold; // Make the text bold
+        border-radius: 8px; // Rounded corners
+        cursor: pointer;
+        transition: background-color 0.3s; // Smooth hover transition
+
+        &:hover {
+            background-color: #45A049; // Darker green on hover
+        }
+    }
+}
