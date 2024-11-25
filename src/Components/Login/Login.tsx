@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.scss';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
-
-    if (savedUserData.email === email && savedUserData.password === password) {
-      // Set login status
-      localStorage.setItem('isLoggedIn', 'true');
-      alert('Login successful!');
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      console.log("User logged in successfully!");
       navigate('/');
-    } else {
-      alert('User not registered. Redirecting to registration page.');
-      navigate('/register');
+      
+    } catch (error) {
+      console.error("Error logging in", error);
     }
   };
 

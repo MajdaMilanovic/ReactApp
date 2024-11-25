@@ -6,11 +6,6 @@ import { Kategorije } from '../Kategorije';
 
 export const HomePage = () => {
   const navigate = useNavigate();
-//  useEffect(() => {
-//     const savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
-//     setUserData(savedUserData);
-//   }, []);
-
     const goToList = () => {
       navigate('/list');
     }

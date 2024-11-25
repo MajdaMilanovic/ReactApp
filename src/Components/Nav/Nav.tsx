@@ -1,43 +1,38 @@
 import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import "./Nav.scss";
-
+import { useAuth } from "../../hooks/useAuth";
+import { auth } from "../../firebase";
+import { signOut } from "firebase/auth";
 
 export const Nav = () =>
 {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userData, setUserData] = useState({ email: '', name: '' });
+   const { user, loading } = useAuth();
     const navigate = useNavigate();
 
-    useEffect(() => {
-    const savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
-    setUserData(savedUserData);
-  }, []);
+    if(loading) {
+      return <div className="navbar_loading">Loading...</div>
+    }
 
-  useEffect(() => {
-    const loggedInStatus = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(loggedInStatus);
-  }, []);
-
-
-    const handleLogOut = () =>
+    const handleLogOut =  () =>
   {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userData'); 
+    auth.signOut(); 
     alert('You have successfully logged out.');
-    navigate('/login'); 
-    setIsLoggedIn(false);
+    navigate('/login');
   }
 
-  if (!isLoggedIn) {
-    return null; 
-  }
-  else
-    return (
-         <nav className="navbar">
-            <p>Dobrodošli {userData.email} !</p>
-      <button onClick={handleLogOut}>Log Out</button>
-    </nav>
-    );
+  if (!user) return null;
 
+   return (
+    <div>
+    {user ? (
+      <div className="navbar" >
+        <p className="user-profile">Dobrodošli {user.email} !</p>
+       <button onClick={handleLogOut}>Log Out</button>
+    </div>
+    ) : (
+      <h1>Please register and log in to access your dashboard.</h1>
+    )}
+</div>
+  );
 };

@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Registration.scss';
+import { auth } from '../../firebase';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 const RegistrationForm = () => {
   const [name, setName] = useState('');
@@ -13,26 +15,24 @@ const RegistrationForm = () => {
     navigate('/login');
       }
 
-
-   const handleSubmit = (e: React.FormEvent) => {
+   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    
     const userData = { name, email, password };
 
-    // Save user data to localStorage
-    localStorage.setItem('userData', JSON.stringify(userData));
+     try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-    setFormData(userData);
-
-  
-    setName('');
-    setEmail('');
-    setPassword('');
-
-    alert('User registered successfully!');
-     navigate('/login'); 
-
+      //  localStorage.setItem('userData', JSON.stringify(userData));
+      //   setFormData(userData);
+      //   setName('');
+      //   setEmail('');
+      //   setPassword('');
+       alert('User registered successfully!');
+        navigate('/login'); 
+     } catch (error) {
+      console.error("Error registering user", error);
+      
+     }
 
   };
 
