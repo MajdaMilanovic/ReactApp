@@ -1,77 +1,98 @@
-import React, {useState} from "react";
-
+import React, {useEffect, useState} from "react";
 import './ToDoItem.scss';
+import { addDoc, collection } from "firebase/firestore";
+import { addTask, updateTask, deleteTask } from "../../services/taskService";
+import { User } from "firebase/auth";
+import { useAuth } from "../../hooks/useAuth";
+import { getUserTasksRealtime } from "../../services/taskService";
+import { Task } from "../../types/Task";
 
 interface ToDoItemProps {
   category:string;
 }
 
-export const ToDoItem: React.FC<ToDoItemProps> = ({ category }: { category: string }) => {
-  const [todos, setTodos] = useState([
-    { id: 1, task: 'Complete React project',category: 'Work', completed: false },
-    { id: 2, task: 'Review pull requests',category: 'School', completed: false },
-    { id: 3, task: 'Prepare for team meeting',category: 'Free Time', completed: false },
-    { id: 4, task: 'Update portfolio',category: 'Charity', completed: false },
-    { id: 5, task: 'Write blog post',category: 'School', completed: false },
-    { id: 6, task: 'Plan next sprint',category: 'Work', completed: false },
-    { id: 7, task: 'Read a new book',category: 'Charity', completed: false },
-    { id: 8, task: 'Organize workspace',category: 'School', completed: false },
-    { id: 9, task: 'Learn TypeScript',category: 'Free Time', completed: false },
-  ]);
-
-  const [newTask, setNewTask] = useState('');
+type TaskListProps = {
+  selectedCategory?: string;
+  onTaskClick?: (task: Task) => void;
+};
+export const ToDoItem: React.FC<TaskListProps> = ({ selectedCategory }) => {
   const [errorMessage, setErrorMessage] = useState('');
-  const taskExists = todos.some((todo) => todo.task.toLowerCase() === newTask.toLowerCase());
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [newTask, setNewTask] = useState('');
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const { user } = useAuth(); 
 
-  const filteredTodos = todos.filter((todo) => todo.category === category);
 
-  const addTodo = () => {    
-    if (newTask.trim() === '') {
-      setErrorMessage('Ne moze biti prazno');
-      alert(errorMessage);
-    } else if (taskExists) {
-      setErrorMessage('Vec postoji');
-      alert("vec postoji takav task girlllll ");
-    } else {
-      setTodos([
-        ...todos,
-        { id: todos.length + 1, task: newTask, category, completed: false }
-      ]);
-      setNewTask('');
-      setErrorMessage('');
+ useEffect(() => {
+    let unsubscribe: () => void;
+    if (user) {
+      unsubscribe = getUserTasksRealtime(user.uid, setTasks);
+    }
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user]);
+
+
+  const handleAddTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (user && newTaskTitle.trim()) {
+      const newTask: Omit<Task, "id"> = {
+        title: newTaskTitle,
+        description: "",
+        completed: false,
+        userId: user.uid,
+        createdAt: new Date(),
+        category: selectedCategory || "Uncategorized",
+      };
+      await addTask(newTask);
+      setNewTask("");
     }
   };
 
-  const removeTodo = (id: number) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
-  };
+// };
+const handleToggleComplete = async (task: Task) => {
+await updateTask(task.id!, { completed: !task.completed });
+};
+
+const handleDeleteTask = async (taskId: string) => {
+await deleteTask(taskId);
+};
+  const filteredTasks = selectedCategory
+    ? tasks.filter((task) => task.category === selectedCategory)
+    : tasks;
+
+  if (!user) {
+    return <div>Please log in to view tasks.</div>;
+  }
 
   return (
-    <div className="todo-container">
-      <h2>{category}</h2>
-      <ul className="todo-list">
-        {filteredTodos.map((todo) => (
-          <li key={todo.id} className="todo-item">
-            {todo.task}
-            <button onClick={() => removeTodo(todo.id)} className="remove-btn">Remove</button>
+    <div className="task-list">
+      <h2>Tasks for {selectedCategory || "All Categories"}</h2>
+      <form onSubmit={handleAddTask}>
+        <input
+          type="text"
+          value={newTaskTitle}
+          onChange={(e) => setNewTaskTitle(e.target.value)}
+          placeholder="New task title"
+        />
+        <button type="submit">Add Task</button>
+      </form>
+      <ul>
+        {filteredTasks.map((task) => (
+          <li key={task.id}>
+            <input
+              type="checkbox"
+              checked={task.completed}
+              onChange={() => handleToggleComplete(task)}
+            />
+            {task.title}
+            <button onClick={() => handleDeleteTask(task.id!)}>Delete</button>
           </li>
         ))}
       </ul>
-      <div className="todo-input">
-        <input 
-          type="text" 
-          value={newTask} 
-          onChange={(e) => setNewTask(e.target.value)} 
-          placeholder="Add new task" 
-        />
-        <button onClick={addTodo}  disabled={newTask.trim() === '' || taskExists} >Add Task</button>
-        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      </div>
-      {/* <ul>
-        {filteredTodos.map((todo) => (
-          <li key={todo.id}>{todo.task}</li>
-        ))}
-      </ul> */}
     </div>
   );
 };

@@ -37,7 +37,7 @@ export const App: React.FC = () => {
        <Route path="/welcome" element= {<WelcomePage />}></Route>
         <Route path="+" element= {<Navigate to="/" />}></Route>
         <Route path="categories" element = {<Kategorije />}></Route>
-        <Route path="item" element={<ToDoItem category="School" />} />
+        <Route path="item" element={<ToDoItem selectedCategory="School"/>} />
         <Route path="list" element = {<ToDoList />}></Route>
   </Routes>
   </>
